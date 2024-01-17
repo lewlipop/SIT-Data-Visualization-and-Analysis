@@ -19,6 +19,8 @@ URL = "https://www.google.com/maps/search/japanese+restaurant/@1.3093935,103.780
 browser = webdriver.Chrome()
 browser.get(URL)
 
+# Hello
+
 
 # # deal with cookies
 # cookies = browser.find_element_by_class_name('.QS5gu.sy4vM')
