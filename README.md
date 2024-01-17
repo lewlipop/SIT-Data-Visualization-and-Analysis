@@ -18,7 +18,7 @@ In adherence to the project specifications, we will explore various aspects of d
 To achieve our objectives, we will leverage the following technologies:
 
 - **Python:** The primary programming language for data processing, analysis, and visualization.
-- **Google Maps API:** To scrape relevant data about dine-in establishments in Singapore.
+- **Google Maps:** To scrape relevant data about dine-in establishments in Singapore.
 - **Data Visualization Libraries:** Utilizing libraries like Matplotlib and Seaborn for creating pie charts, bar graphs, and other visualizations.
 
 ## Project Structure
