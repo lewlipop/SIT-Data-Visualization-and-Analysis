@@ -51,7 +51,6 @@ To run and explore the project locally, follow these steps:
    ```bash
    python googlemaps_scraper/scraper.py
 
-
 ## Data parsing
 
 1. Launching the data parser
