@@ -6,11 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
 
-# the category for which we seek reviews
-# CATEGORY = "restaurants"
-
-# the location
-# LOCATION = "New York, USA"
 
 # google's main URL
 URL = "https://www.google.com/maps/search/japanese+restaurant/@1.3093935,103.7809834,14z"
@@ -19,35 +14,6 @@ URL = "https://www.google.com/maps/search/japanese+restaurant/@1.3093935,103.780
 browser = webdriver.Chrome()
 browser.get(URL)
 
-
-# # deal with cookies
-# cookies = browser.find_element_by_class_name('.QS5gu.sy4vM')
-# cookies.click()
-
-# # write what you're looking for
-# search_field = browser.find_element_by_tag_name("textarea")
-# search_field.send_keys(f"{CATEGORY} near {LOCATION}")
-
-# # press enter
-# search_field.submit()
-
-# # change to English
-# english_button = browser.find_element_by_xpath("//*[contains(text(),'Change to English')]")
-# english_button.click()
-# time.sleep(4)
-
-# # click in the "Maps" HTML element
-# maps_button = browser.find_element_by_class_name('.GKS7s')
-# maps_button.click()
-# time.sleep(4)
-
-
-
-# def scroll_div(browser, css_selector):
-#  """Scroll div function"""
-#  div = browser.find_element(By.CSS_SELECTOR, css_selector)
-#  browser.execute_script("arguments[0].scrollIntoView(false);", div)
-#  time.sleep(2)
 
 def scroll_and_load(browser, css_selector):
    """Scroll div function"""
@@ -71,7 +37,7 @@ def scroll_and_load(browser, css_selector):
        browser.execute_script("arguments[0].scrollIntoView();", last_category_location)
        
        # Wait for the page to load more content
-       time.sleep(4)
+       time.sleep(1)
 
 # get all elements with class "hfpxzc"
 elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
@@ -84,7 +50,6 @@ for element in elements:
    # add delay to allow page to load
    time.sleep(1)
    scroll_and_load(browser, '.hfpxzc')
-   # scroll_div(browser, ".m6QErb.DxyBCb.kA9KIf.dS8AEf.ecceSd")
    
 
 html = browser.page_source
