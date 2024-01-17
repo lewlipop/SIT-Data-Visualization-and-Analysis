@@ -14,6 +14,8 @@ URL = "https://www.google.com/maps/search/japanese+restaurant/@1.3093935,103.780
 browser = webdriver.Chrome()
 browser.get(URL)
 
+# Hello
+
 
 def scroll_and_load(browser, css_selector):
    """Scroll div function"""
