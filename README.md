@@ -44,3 +44,16 @@ To run and explore the project locally, follow these steps:
 3. Run the Project:
    ```bash
    python main.py
+
+## Web Scraping
+
+1. Lauching the web srcaper
+   ```bash
+   python googlemaps_scraper/scraper.py
+
+
+## Data parsing
+
+1. Launching the data parser
+   ```bash
+   python parser.py
