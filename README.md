@@ -37,7 +37,7 @@ To run and explore the project locally, follow these steps:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://[github.com/your-username/dining-insights](https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis).git
+   git clone https://github.com/AlexanderLJX/SIT-Data-Visualization-and-Analysis.git
 2. Install Dependencies:
    ```bash
    pip install -r requirements.txt
