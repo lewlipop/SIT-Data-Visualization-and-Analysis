@@ -2,8 +2,10 @@ import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 import time
 
 
@@ -68,7 +70,12 @@ URL = "https://www.google.com/maps/search/"
 
 TARGET = "japanese+restaurants"
 
-browser = webdriver.Chrome()
+# Set up Chrome options for headless mode
+chrome_options = Options()
+# chrome_options.add_argument("--headless=new")
+
+browser = webdriver.Chrome(options=chrome_options)
+
 
 
 def scroll_and_load(browser, css_selector):
@@ -92,30 +99,6 @@ def scroll_and_load(browser, css_selector):
        # Scroll to the last category
        browser.execute_script("arguments[0].scrollIntoView();", last_category_location)
        
-       # Wait for the page to load more content
-       time.sleep(0.1)
-
-# # Function to iterate through elements, click, and scroll if needed
-# def iterate_and_scroll(elements):
-#     print("Total elements found:", len(elements))
-    
-#     for index, element in enumerate(elements):
-#         element.click()
-#         print(f"Element {index + 1} clicked")
-#         # Add delay to allow page to load
-#         time.sleep(1)
-        
-#         # Check if it's the last element
-#         if index == len(elements) - 1:
-#             # Scroll and load more elements
-#             scroll_and_load(browser, '.hfpxzc')
-            
-#             # Update the elements list with newly loaded elements
-#             new_elements = elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
-#             elements.extend(new_elements)
-            
-#             print(f"Total elements after scrolling: {len(elements)}")
-
 def find_target_in_area(url):
     browser.get(url)
     print(url)
@@ -133,9 +116,66 @@ def find_target_in_area(url):
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
         current_element.click()
         print("element clicked")
-        # add delay to allow page to load
-        time.sleep(0.1)
-        scroll_and_load(browser, '.hfpxzc')
+        # # add delay to allow page to load
+        # time.sleep(1)
+        print("current element:", iterator + 1)
+        # find the aria-label of the element
+        label = current_element.get_attribute("aria-label")
+        print("label:", label)
+
+        try:
+            # Find the star rating element within the main content div
+            review_main_content_div = WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.F7nice')))
+
+            # Extract the text content of the span containing the star rating
+            star_rating_text = review_main_content_div.find_element(By.TAG_NAME, 'span').text
+
+            # Print the star rating
+            print("Star Rating:", star_rating_text)
+
+            # Extract the text content of the span containing the reviews count
+            reviews_text = review_main_content_div.find_element(By.CSS_SELECTOR, 'span[aria-label*="reviews"]').text
+
+            # Print the reviews count
+            print("Number of Reviews:", reviews_text)
+            
+            # Find the category name "Japanese reaurant" using the class in <button class="DkEaL " jsaction="pane.rating.category">Japanese restaurant</button> ...
+            category_name = WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DkEaL')))
+            
+            # Print the category name
+            print("Category:", category_name.text)
+        except (NoSuchElementException, StaleElementReferenceException, TimeoutException):
+            print("Cannot find Star Rating or Reviews")
+        
+        
+        
+        try:
+            # Find the element with class "mgr77e" - pricing
+            price_element = WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'mgr77e')))
+
+            # Find the nested span element containing the aria-label
+            nested_span_element = price_element.find_element(By.XPATH, './/span[@aria-label]')
+
+            # Extract the aria-label value
+            price_label = nested_span_element.get_attribute('aria-label')
+
+            # Print the price label
+            print("Price Label:", price_label)
+
+        except (NoSuchElementException, StaleElementReferenceException, TimeoutException) as e:
+            print("Target has no price rating")
+            
+        # get the current url in the browser
+        current_url = browser.current_url
+        # parse the url to get the coordinates
+        # e.g. https://www.google.com/maps/place/SUSHI+TEI/@1.2865029,103.8261715,19z/data=!3m1!5s0x31da197ed1a00f67...
+        # becomes 1.2865029,103.8261715
+        coordinates = current_url.split('@')[1].split('/')[0]
+        print("Coordinates:", coordinates)
+
+        # if lesser than 5 elements left, scroll and load more elements
+        if len(elements) - iterator < 5:
+            scroll_and_load(browser, '.hfpxzc')
 
         # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
         new_elements = browser.find_elements(By.CLASS_NAME, "hfpxzc")
@@ -161,13 +201,5 @@ for planning_area in LIST_OF_PLANNING_AREAS:
     url = URL + TARGET + "+in+" + planning_area
     find_target_in_area(url)
 
-
-#     html = browser.page_source
-#     soup = BeautifulSoup(html, 'html.parser')
-
-#     reviews = soup.find_all('div', {'class': 'section-review-content'})
-
-# for review in reviews:
-#    print(review.text)
 
 browser.quit()
