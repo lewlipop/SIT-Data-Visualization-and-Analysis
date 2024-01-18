@@ -30,8 +30,6 @@
    - **Task 5 | Team Member 1**: Implement features to read data from external sources (e.g., txt, JSON, excel, csv), view datasets, and visualize the data.
    - **Task 6 | Team Member 2**: Implement features to search the data based on criteria and view statistics information.
 
----
-
 7. **Data Analysis:**
    - **Task 7 | Team Member 5**: Begin the development of data analysis algorithms to extract insights.
 
