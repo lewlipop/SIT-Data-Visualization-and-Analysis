@@ -7,6 +7,8 @@
    - **Task 1 | Team Member 1 (Xander)**: Begin creating a web scraper for Google Maps.
    - **Task 2 | Team Member 2**: Work on handling edge cases and errors in the data collection process.
 
+---
+
 ### Week 2 (January 20 - January 26)
 
 3. **Data Collection:**
@@ -17,6 +19,8 @@
    - **Task 3 | Team Member 3**: Begin developing the data processing module to clean and organize the collected data.
    - **Task 4 | Team Member 4**: Start working on algorithms to identify and handle outliers in the data.
 
+---
+
 ### Week 3 (January 27 - February 2)
 
 5. **Story Development:**
@@ -25,6 +29,8 @@
 6. **Basic Feature Development:**
    - **Task 5 | Team Member 1**: Implement features to read data from external sources (e.g., txt, JSON, excel, csv), view datasets, and visualize the data.
    - **Task 6 | Team Member 2**: Implement features to search the data based on criteria and view statistics information.
+
+---
 
 7. **Data Analysis:**
    - **Task 7 | Team Member 5**: Begin the development of data analysis algorithms to extract insights.
@@ -37,6 +43,8 @@
 
 10. **Documentation:**
     - All team members: Begin drafting their Presentation Slides and IEEE Report sections
+
+---
 
 ### Week 4 (February 3 - February 9)
 
@@ -59,6 +67,8 @@
 16. **Documentation:**
     - All team members: Work through at least 50% of their Presentation Slides and IEEE Report sections.
 
+---
+
 ### Week 5 (February 10 - February 16)
 
 17. **UI Design:**
@@ -72,6 +82,8 @@
 
 20. **Documentation:**
     - All team members: Finalize Their Presentation Slides and IEEE Report sections.
+
+---
 
 ### Week 6 (February 17 - February 23)
 
