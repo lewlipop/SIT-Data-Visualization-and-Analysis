@@ -50,7 +50,7 @@
    - **Task 12 | Team Member 5**: Continue refining and testing data analysis algorithms.
 
 12. **Data Visualization:**
-   - **Task 13 | Team Member 4**: Start implementing the visualizations using Matplotlib and Seaborn.
+   - **Task 13 | Team Member 4**: Start implementing the visualizations using Matplotlib and Seaborn, etc.
 
 13. **Advanced Feature Development:**
    - **Task 14 | Team Member 4**: Identify and implement advanced features such as pattern/anomaly detection, prediction, or other analyses using advanced data science libraries.

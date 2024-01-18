@@ -1,6 +1,8 @@
+import csv
 import time
 from selenium import webdriver
 from bs4 import BeautifulSoup
+from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
@@ -13,54 +15,54 @@ import time
 LIST_OF_PLANNING_AREAS = [
     "Ang Mo Kio",
     "Bedok",
-    "Bishan",
-    "Bukit Batok",
-    "Bukit Merah",
-    "Bukit Panjang",
-    "Bukit Timah",
-    "Central Water Catchment",
-    "Changi",
-    "Choa Chu Kang",
-    "Clementi",
-    "Downtown Core",
-    "Geylang",
-    "Hougang",
-    "Jurong East",
-    "Jurong West",
-    "Kallang",
-    "Lim Chu Kang",
-    "Mandai",
-    "Marina East",
-    "Marina South",
-    "Marine Parade",
-    "Museum",
-    "Newton",
-    "Novena",
-    "Outram",
-    "Pasir Ris",
-    "Paya Lebar",
-    "Pioneer",
-    "Punggol",
-    "Queenstown",
-    "River Valley",
-    "Rochor",
-    "Seletar",
-    "Sembawang",
-    "Sengkang",
-    "Serangoon",
-    "Simpang",
-    "Singapore River",
-    "Southern Islands",
-    "Sungei Kadut",
-    "Tampines",
-    "Tanglin",
-    "Tengah",
-    "Toa Payoh",
-    "Tuas",
-    "Western Islands",
-    "Western Water Catchment",
-    "Woodlands",
-    "Yishun"
+    # "Bishan",
+    # "Bukit Batok",
+    # "Bukit Merah",
+    # "Bukit Panjang",
+    # "Bukit Timah",
+    # "Central Water Catchment",
+    # "Changi",
+    # "Choa Chu Kang",
+    # "Clementi",
+    # "Downtown Core",
+    # "Geylang",
+    # "Hougang",
+    # "Jurong East",
+    # "Jurong West",
+    # "Kallang",
+    # "Lim Chu Kang",
+    # "Mandai",
+    # "Marina East",
+    # "Marina South",
+    # "Marine Parade",
+    # "Museum",
+    # "Newton",
+    # "Novena",
+    # "Outram",
+    # "Pasir Ris",
+    # "Paya Lebar",
+    # "Pioneer",
+    # "Punggol",
+    # "Queenstown",
+    # "River Valley",
+    # "Rochor",
+    # "Seletar",
+    # "Sembawang",
+    # "Sengkang",
+    # "Serangoon",
+    # "Simpang",
+    # "Singapore River",
+    # "Southern Islands",
+    # "Sungei Kadut",
+    # "Tampines",
+    # "Tanglin",
+    # "Tengah",
+    # "Toa Payoh",
+    # "Tuas",
+    # "Western Islands",
+    # "Western Water Catchment",
+    # "Woodlands",
+    # "Yishun"
 ]
 
 # google's main URL
@@ -72,11 +74,14 @@ TARGET = "japanese+restaurants"
 
 # Set up Chrome options for headless mode
 chrome_options = Options()
-# chrome_options.add_argument("--headless=new")
+chrome_options.add_argument("--headless=new")
 
 browser = webdriver.Chrome(options=chrome_options)
 
-
+# Create a CSV file and write the header
+csv_file = open('scraped_data_' + TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8', newline='')
+csv_writer = csv.writer(csv_file)
+csv_writer.writerow(['Planning Area', 'Name', 'Star Rating', 'Reviews', 'Category', 'Price Label', 'Metadata'])
 
 def scroll_and_load(browser, css_selector):
    """Scroll div function"""
@@ -99,7 +104,8 @@ def scroll_and_load(browser, css_selector):
        # Scroll to the last category
        browser.execute_script("arguments[0].scrollIntoView();", last_category_location)
        
-def find_target_in_area(url):
+def find_target_in_area(url, planning_area):
+    url = url + planning_area
     browser.get(url)
     print(url)
     # get all elements with class "hfpxzc"
@@ -111,6 +117,10 @@ def find_target_in_area(url):
     iterator = 0
 
     while True:
+        # initialise variables
+        location_name, star_rating, reviews_text, category_name, price_rating = "", "", "", "", ""
+
+
         print("Total elements found:", len(elements))
         current_element = elements[iterator]
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
@@ -120,34 +130,67 @@ def find_target_in_area(url):
         # time.sleep(1)
         print("current element:", iterator + 1)
         # find the aria-label of the element
-        label = current_element.get_attribute("aria-label")
-        print("label:", label)
+        location_name = current_element.get_attribute("aria-label")
+        print("location_name:", location_name)
 
         try:
             # Find the star rating element within the main content div
-            review_main_content_div = WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.F7nice')))
+            review_main_content_div = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.F7nice')))
 
             # Extract the text content of the span containing the star rating
-            star_rating_text = review_main_content_div.find_element(By.TAG_NAME, 'span').text
+            star_rating = review_main_content_div.find_element(By.TAG_NAME, 'span').text
 
             # Print the star rating
-            print("Star Rating:", star_rating_text)
+            print("star_rating:", star_rating)
 
             # Extract the text content of the span containing the reviews count
             reviews_text = review_main_content_div.find_element(By.CSS_SELECTOR, 'span[aria-label*="reviews"]').text
 
             # Print the reviews count
             print("Number of Reviews:", reviews_text)
-            
+        except NoSuchElementException:
+            print("NoSuchElementException")
+            print("Target has no star rating")
+            if star_rating == "":
+                star_rating = "NoSuchElementException"
+            if reviews_text == "":
+                reviews_text = "NoSuchElementException"
+        except StaleElementReferenceException:
+            print("StaleElementReferenceException")
+            print("Target has no star rating")
+            if star_rating == "":
+                star_rating = "StaleElementReferenceException"
+            if reviews_text == "":
+                reviews_text = "StaleElementReferenceException"
+        except TimeoutException:
+            print("TimeoutException")
+            print("Target has no star rating")
+            if star_rating == "":
+                star_rating = "TimeoutException"
+            if reviews_text == "":
+                reviews_text = "TimeoutException"
+
+        try:
             # Find the category name "Japanese reaurant" using the class in <button class="DkEaL " jsaction="pane.rating.category">Japanese restaurant</button> ...
-            category_name = WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DkEaL')))
+            category_name = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DkEaL'))).text
             
             # Print the category name
-            print("Category:", category_name.text)
-        except (NoSuchElementException, StaleElementReferenceException, TimeoutException):
-            print("Cannot find Star Rating or Reviews")
-        
-        
+            print("Category:", category_name)
+        except NoSuchElementException:
+            print("NoSuchElementException")
+            print("Target has no category name")
+            if category_name == "":
+                category_name = "NoSuchElementException"
+        except StaleElementReferenceException:
+            print("StaleElementReferenceException")
+            print("Target has no category name")
+            if category_name == "":
+                category_name = "StaleElementReferenceException"
+        except TimeoutException:
+            print("TimeoutException")
+            print("Target has no category name")
+            if category_name == "":
+                category_name = "TimeoutException"
         
         try:
             # Find the element with class "mgr77e" - pricing
@@ -157,21 +200,39 @@ def find_target_in_area(url):
             nested_span_element = price_element.find_element(By.XPATH, './/span[@aria-label]')
 
             # Extract the aria-label value
-            price_label = nested_span_element.get_attribute('aria-label')
+            price_rating = nested_span_element.get_attribute('aria-label')
 
             # Print the price label
-            print("Price Label:", price_label)
+            print("Price Label:", price_rating)
 
-        except (NoSuchElementException, StaleElementReferenceException, TimeoutException) as e:
-            print("Target has no price rating")
+        except NoSuchElementException:
+            print("NoSuchElementException")
+            print("Target has no price label")
+            if price_rating == "":
+                price_rating = "NoSuchElementException"
+        except StaleElementReferenceException:
+            print("StaleElementReferenceException")
+            print("Target has no price label")
+            if price_rating == "":
+                price_rating = "StaleElementReferenceException"
+        except TimeoutException:
+            print("TimeoutException")
+            print("Target has no price label")
+            if price_rating == "":
+                price_rating = "TimeoutException"
             
-        # get the current url in the browser
-        current_url = browser.current_url
-        # parse the url to get the coordinates
-        # e.g. https://www.google.com/maps/place/SUSHI+TEI/@1.2865029,103.8261715,19z/data=!3m1!5s0x31da197ed1a00f67...
-        # becomes 1.2865029,103.8261715
-        coordinates = current_url.split('@')[1].split('/')[0]
-        print("Coordinates:", coordinates)
+        # find the text of all the divs with class "Io6YTe fontBodyMedium kR99db "
+        list_of_divs = browser.find_elements(By.CSS_SELECTOR, '.Io6YTe.fontBodyMedium.kR99db')
+        metadata_list = []
+        for i, div in enumerate(list_of_divs):
+            print("metadata " + str(i + 1), ": " + str(div.text))
+            metadata_list.append(div.text)
+
+        # save the data to csv
+        try:
+            csv_writer.writerow([planning_area, location_name, star_rating, reviews_text, category_name, price_rating, metadata_list])
+        except NameError:
+            "element cannot be saved to csv"
 
         # if lesser than 5 elements left, scroll and load more elements
         if len(elements) - iterator < 5:
@@ -198,8 +259,7 @@ def find_target_in_area(url):
 
 # for each planning area, get the url and find the target
 for planning_area in LIST_OF_PLANNING_AREAS:
-    url = URL + TARGET + "+in+" + planning_area
-    find_target_in_area(url)
+    find_target_in_area(URL + TARGET + "+in+", planning_area)
 
 
 browser.quit()
