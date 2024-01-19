@@ -74,7 +74,7 @@ TARGET = "japanese+restaurants"
 
 # Set up Chrome options for headless mode
 chrome_options = Options()
-chrome_options.add_argument("--headless=new")
+# chrome_options.add_argument("--headless=new")
 
 browser = webdriver.Chrome(options=chrome_options)
 
@@ -116,6 +116,8 @@ def find_target_in_area(url, planning_area):
     noMoreResults = False
     iterator = 0
 
+    
+
     while True:
         # initialise variables
         location_name, star_rating, reviews_text, category_name, price_rating = "", "", "", "", ""
@@ -126,12 +128,43 @@ def find_target_in_area(url, planning_area):
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
         current_element.click()
         print("element clicked")
-        # # add delay to allow page to load
-        # time.sleep(1)
-        print("current element:", iterator + 1)
+
         # find the aria-label of the element
         location_name = current_element.get_attribute("aria-label")
         print("location_name:", location_name)
+        # # add delay to allow page to load
+        # time.sleep(1)
+        # how to figure out if page is loaded? check class "DUwDvf lfPIob"
+        while True:
+            try:
+                location_name2 = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DUwDvf.lfPIob'))).text
+                print("location_name2:", location_name2)
+            except TimeoutException:
+                print("TimeoutException")
+                print("Target has no location name")
+                location_name2 = "TimeoutException"
+                break
+            except NoSuchElementException:
+                print("NoSuchElementException")
+                print("Target has no location name")
+                location_name2 = "NoSuchElementException"
+            except StaleElementReferenceException:
+                print("StaleElementReferenceException")
+                print("Target has no location name")
+                location_name2 = "StaleElementReferenceException"
+            if location_name == location_name2:
+                break
+            else:
+                # reclick the element
+                current_element.click()
+                # try scrolling down
+                scroll_and_load(browser, '.hfpxzc')
+                
+                
+        print("location_name2:", location_name2)
+
+        print("current element:", iterator + 1)
+        
 
         try:
             # Find the star rating element within the main content div
@@ -221,13 +254,22 @@ def find_target_in_area(url, planning_area):
             if price_rating == "":
                 price_rating = "TimeoutException"
             
-        # find the text of all the divs with class "Io6YTe fontBodyMedium kR99db "
-        list_of_divs = browser.find_elements(By.CSS_SELECTOR, '.Io6YTe.fontBodyMedium.kR99db')
-        metadata_list = []
-        for i, div in enumerate(list_of_divs):
-            print("metadata " + str(i + 1), ": " + str(div.text))
-            metadata_list.append(div.text)
-
+        try:
+            # find the text of all the divs with class "Io6YTe fontBodyMedium kR99db "
+            list_of_divs = browser.find_elements(By.CSS_SELECTOR, '.Io6YTe.fontBodyMedium.kR99db')
+            metadata_list = []
+            for i, div in enumerate(list_of_divs):
+                print("metadata " + str(i + 1), ": " + str(div.text))
+                metadata_list.append(div.text)
+        except NoSuchElementException:
+            print("NoSuchElementException")
+            print("Target has no metadata")
+            metadata_list = ["NoSuchElementException"]
+        except StaleElementReferenceException:
+            print("StaleElementReferenceException")
+            print("Target has no metadata")
+            metadata_list = ["StaleElementReferenceException"]
+        
         # save the data to csv
         try:
             csv_writer.writerow([planning_area, location_name, star_rating, reviews_text, category_name, price_rating, metadata_list])
