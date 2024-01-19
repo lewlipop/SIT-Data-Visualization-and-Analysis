@@ -56,3 +56,18 @@ To run and explore the project locally, follow these steps:
 1. Launching the data parser
    ```bash
    python parser.py
+
+
+## TODO
+
+- scrape reviews
+
+- scrape about
+
+- scrape hourly and daily traffic
+
+- bayesian rating
+
+- organize code
+
+- scrape if 'sponsored'
