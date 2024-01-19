@@ -15,9 +15,9 @@ import time
 LIST_OF_PLANNING_AREAS = [
     "Ang Mo Kio",
     "Bedok",
-    # "Bishan",
-    # "Bukit Batok",
-    # "Bukit Merah",
+    "Bishan",
+    "Bukit Batok",
+    "Bukit Merah",
     # "Bukit Panjang",
     # "Bukit Timah",
     # "Central Water Catchment",
@@ -70,7 +70,7 @@ LIST_OF_PLANNING_AREAS = [
 
 URL = "https://www.google.com/maps/search/"
 
-TARGET = "japanese+restaurants"
+TARGET = "food"
 
 # Set up Chrome options for headless mode
 chrome_options = Options()
@@ -79,7 +79,7 @@ chrome_options = Options()
 browser = webdriver.Chrome(options=chrome_options)
 
 # Create a CSV file and write the header
-csv_file = open('scraped_data_' + TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8', newline='')
+csv_file = open('scraped_data_' + TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
 csv_writer = csv.writer(csv_file)
 csv_writer.writerow(['Planning Area', 'Name', 'Star Rating', 'Reviews', 'Category', 'Price Label', 'Metadata'])
 
@@ -99,7 +99,7 @@ def scroll_and_load(browser, css_selector):
        last_category_in_page = categories[-1].get('aria-label')
        
        # Find the location of the last category
-       last_category_location = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.XPATH, f"""//*[@aria-label="{last_category_in_page}"]""")))
+       last_category_location = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.XPATH, f"""//*[@aria-label="{last_category_in_page}"]""")))
        
        # Scroll to the last category
        browser.execute_script("arguments[0].scrollIntoView();", last_category_location)
@@ -122,9 +122,9 @@ def find_target_in_area(url, planning_area):
         # initialise variables
         location_name, star_rating, reviews_text, category_name, price_rating = "", "", "", "", ""
 
-
         print("Total elements found:", len(elements))
         current_element = elements[iterator]
+        print("current element:", iterator)
         browser.execute_script("arguments[0].scrollIntoView();", current_element)
         current_element.click()
         print("element clicked")
@@ -137,7 +137,7 @@ def find_target_in_area(url, planning_area):
         # how to figure out if page is loaded? check class "DUwDvf lfPIob"
         while True:
             try:
-                location_name2 = WebDriverWait(browser, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DUwDvf.lfPIob'))).text
+                location_name2 = WebDriverWait(browser, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, '.DUwDvf.lfPIob'))).text
                 print("location_name2:", location_name2)
             except TimeoutException:
                 print("TimeoutException")
@@ -155,15 +155,14 @@ def find_target_in_area(url, planning_area):
             if location_name == location_name2:
                 break
             else:
+                print(iterator)
                 # reclick the element
                 current_element.click()
-                # try scrolling down
-                scroll_and_load(browser, '.hfpxzc')
+                # # try scrolling down
+                # scroll_and_load(browser, '.hfpxzc')
                 
                 
         print("location_name2:", location_name2)
-
-        print("current element:", iterator + 1)
         
 
         try:
@@ -227,7 +226,7 @@ def find_target_in_area(url, planning_area):
         
         try:
             # Find the element with class "mgr77e" - pricing
-            price_element = WebDriverWait(browser, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'mgr77e')))
+            price_element = WebDriverWait(browser, 4).until(EC.presence_of_element_located((By.CLASS_NAME, 'mgr77e')))
 
             # Find the nested span element containing the aria-label
             nested_span_element = price_element.find_element(By.XPATH, './/span[@aria-label]')
@@ -270,14 +269,10 @@ def find_target_in_area(url, planning_area):
             print("Target has no metadata")
             metadata_list = ["StaleElementReferenceException"]
         
-        # save the data to csv
-        try:
-            csv_writer.writerow([planning_area, location_name, star_rating, reviews_text, category_name, price_rating, metadata_list])
-        except NameError:
-            "element cannot be saved to csv"
+        csv_writer.writerow([planning_area, location_name, star_rating, reviews_text, category_name, price_rating, metadata_list])
 
         # if lesser than 5 elements left, scroll and load more elements
-        if len(elements) - iterator < 5:
+        if len(elements) - iterator < 4:
             scroll_and_load(browser, '.hfpxzc')
 
         # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
