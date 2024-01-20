@@ -356,7 +356,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer):
                 
                 if review_index == int(number_of_reviews)-1: # if reached the last review
                     break
-                if review_index > 69:
+                if review_index > 5:
                     break
 
                 # increment review index
@@ -379,6 +379,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer):
             # Click on About tab
             while True:
                 try:
+                    buttons = tab_list.find_elements(By.TAG_NAME, 'button')
                     buttons[1].click()
                     about_present = browser.find_element(By.CLASS_NAME, 'iP2t7d.fontBodyMedium')
                     break
@@ -418,7 +419,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer):
         csv_writer.writerow([href, planning_area, location_name, seo_rating, sponsored_label, star_rating, number_of_reviews, category_name, price_rating, metadata_list, all_tags, about_combined])
 
         # if lesser than 5 elements left, scroll and load more elements
-        if len(elements) - element_index < 4:
+        if len(elements) - element_index < 10:
             scroll_and_load(browser, '.hfpxzc')
 
         # more elements are loaded after scrolling, add the new elements to the list, but only if they are not already in the list
