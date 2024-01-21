@@ -68,7 +68,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
 
     while True:
         # initialise variables
-        location_name, sponsored_label, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, all_tags, about_combined = "", "", {}, "", "", "", "", "", [], []
+        location_name, sponsored_label, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, address, all_tags, about_combined = "", "", {}, "", "", "", "", "", "", [], []
 
         seo_rating = element_index + 1
 
@@ -272,8 +272,13 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
             list_of_divs = browser.find_elements(By.CSS_SELECTOR, '.Io6YTe.fontBodyMedium.kR99db')
             metadata_list = []
             for i, div in enumerate(list_of_divs):
-                print("metadata " + str(i + 1), ": " + str(div.text))
-                metadata_list.append(div.text)
+                if i == 0:
+                    # write to address
+                    address = div.text
+                    print("address:", address)
+                else:
+                    print("metadata " + str(i + 1), ": " + str(div.text))
+                    metadata_list.append(div.text)
         except NoSuchElementException:
             print("NoSuchElementException")
             print("Target has no metadata")
@@ -537,7 +542,7 @@ def find_target_in_area(url, planning_area, browser, csv_writer, csv_writer_revi
                     continue
             
         with file_write_lock:
-            csv_writer.writerow([href, planning_area, location_name, seo_rating, sponsored_label, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, metadata_list, all_tags, about_combined])
+            csv_writer.writerow([href, planning_area, location_name, seo_rating, sponsored_label, popular_times, star_rating, indv_star_rating, number_of_reviews, category_name, price_rating, address, metadata_list, all_tags, about_combined])
 
         # if lesser than 5 elements left, scroll and load more elements
         if len(elements) - element_index < 10:
@@ -582,7 +587,7 @@ def main():
     # Create a CSV file and write the header
     csv_file = open('scraped_data_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['href', 'Planning Area', 'Name', 'Search Engine Rating', 'Sponsored', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Metadata', 'Tags', 'About'])
+    csv_writer.writerow(['href', 'Planning Area', 'Name', 'Search Engine Rating', 'Sponsored', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
 
     csv_file_reviews = open('scraped_data_reviews_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer_reviews = csv.writer(csv_file_reviews)

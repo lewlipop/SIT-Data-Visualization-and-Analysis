@@ -1,6 +1,2 @@
 # Ignore all CSV files
 *.csv
-
-# Exception: Allow specific CSV files
-!scraped_data_food.csv
-!scraped_data_reviews_food.csv

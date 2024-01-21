@@ -70,6 +70,7 @@ To run and explore the project locally, follow these steps:
  - **Reviews:** Number of reviews of the restaurant
  - **Category:** Category of the restaurant e.g. (Korean, Japanese, etc...)
  - **Price Rating:** Official Google price rating of the restaurant (The number of dollar signs)
+ - **Address:** Address of the restaurant
  - **Metadata:** Metadata of the restaurant, including location etc.
  - **Tags** Food tags, given by reviewers. e.g. Chicken, Pasta, etc..
  - **About** A list of stuff in the About section of the restaurant
