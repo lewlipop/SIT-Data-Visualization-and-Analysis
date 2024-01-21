@@ -65,7 +65,8 @@ To run and explore the project locally, follow these steps:
  - **Name:** Name of the restaurant
  - **Search Engine Rating:** 1 means it it the first restaurant that appears in the list when searching that specific planning area, 2 means it's the second, and so on.
  - **Sponsored:** Whether the restaurant paid for google advertising. This will probably mean it will be the first to appear in the list, search engine rating 1.
- - **Star Rating:** Average star rating of the restaurant
+ - **Popular Times:** Data on aggregated and anonymized Location History data
+ - **Average Star Rating:** Average star rating of the restaurant
  - **Reviews:** Number of reviews of the restaurant
  - **Category:** Category of the restaurant e.g. (Korean, Japanese, etc...)
  - **Price Rating:** Official Google price rating of the restaurant (The number of dollar signs)
@@ -78,26 +79,16 @@ To run and explore the project locally, follow these steps:
  - **href of Place:** Link to the place on google maps, can be used as Primary key for the Restaurants csv
  - **Review ID:** Review ID of the review
  - **Relavancy Ranking:** Ranking of the review, 1 being the most relevant (Appears as the first review)
+ - **Reviewer href:** Link to reviewer, can be used a primary key
  - **Reviewer Name:** Name of the reviewer
  - **Local Guide:** Whether the reviewer is a local guide
  - **Total Reviews:** Total number of reviews the reviewer has made
  - **Total Photos:** Total number of photos the reviewer has made
  - **Star Rating:** Star rating of the review
- - **Date:** How long ago was the review made
+ - **Date:** Date the review was made - calculated based on relative time
  - **Review:** Text of the review
  - **Metadata:** Food, Service ratings etc.
  
 
 ## TODO
 
-- scrape reviews
-
-- scrape about
-
-- scrape hourly and daily traffic
-
-- bayesian rating
-
-- organize code
-
-- scrape if 'sponsored'
