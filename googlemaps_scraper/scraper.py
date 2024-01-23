@@ -587,7 +587,7 @@ def main():
     # Create a CSV file and write the header
     csv_file = open('scraped_data_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer = csv.writer(csv_file)
-    csv_writer.writerow(['href', 'Planning Area', 'Name', 'Search Engine Rating', 'Sponsored', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
+    csv_writer.writerow(['href', 'Sub Area', 'Name', 'Search Engine Rating', 'Sponsored', 'Popular Times', 'Average Star Rating', 'Individual Star Rating', 'Reviews', 'Category', 'Price Rating', 'Address', 'Metadata', 'Tags', 'About'])
 
     csv_file_reviews = open('scraped_data_reviews_' + constants.TARGET.replace("+", "_") + '.csv', 'w', encoding='utf-8-sig', newline='')
     csv_writer_reviews = csv.writer(csv_file_reviews)
@@ -595,7 +595,7 @@ def main():
 
     # run Multi Threaded
     with ThreadPoolExecutor(max_workers=6) as executor:
-        for planning_area in constants.LIST_OF_PLANNING_AREAS:
+        for planning_area in constants.SUB_AREAS:
             executor.submit(scrape_area, planning_area, csv_writer, csv_writer_reviews)
 
     # # run Single Threaded
